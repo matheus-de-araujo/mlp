@@ -18,7 +18,7 @@ public class App
     }
 
     public static ArrayList<Inputs> getinputs() throws NumberFormatException, IOException {
-        FileInputStream fileInputStream = new FileInputStream("src/dado.csv");
+        FileInputStream fileInputStream = new FileInputStream("src/dados.csv");
         BufferedReader BufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
         ArrayList<Inputs> inputs = new ArrayList<>();
 
