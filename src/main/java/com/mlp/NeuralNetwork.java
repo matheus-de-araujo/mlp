@@ -21,7 +21,7 @@ public class NeuralNetwork {
         
         this.output = new float[4];
 
-        initLayears(4);
+        initLayears(this.output.length);
 
     }
 
@@ -33,42 +33,6 @@ public class NeuralNetwork {
 
             this.layears[i] = l;
         }
-    }
-
-    public boolean train() {
-
-        int count = 0;
-
-        do {
-
-            int sucess = 1;
-
-            for(Inputs input : inputs) {
-                boolean firstLoop = true;
-                for(Layear layer : this.layears) {
-                    if(firstLoop) {
-                        this.output = run(input, layer.getWeights(), layer.getBias());
-                        firstLoop = false;
-                    }
-                    input.x1 = output[0];
-                    this.output = run(input, layer.getWeights(), layer.getBias());
-    
-                    // if(output == input.d1) {
-                    // } else {
-                    //     sucess = 0;
-                    //     adjust(input);
-                    // }
-                }
-            }
-            
-            if(sucess == 1) {
-                System.out.println("Epoca " + (count + 1));
-            }
-            count++;
-        } while(count < this.iterations);
-
-        // System.out.println("Peso 1: " + this.weights[0] + " Peso 2: " + this.weights[1]);
-        return true;
     }
 
 
@@ -97,9 +61,54 @@ public class NeuralNetwork {
         return activationFunction(this.output);
     }
 
-    public void adjust(Inputs input) {
+    public boolean train() {
 
-        // float learningRate = 0.1f;
+        int count = 0;
+
+        do {
+
+            for(Inputs input : inputs) {
+                boolean firstLoop = true;
+                for(Layear layer : this.layears) {
+                    if(!firstLoop) {
+                        setOutputInInput(input);
+                    }
+                    
+                    this.output = run(input, layer.getWeights(), layer.getBias());
+                    
+                    firstLoop = false;
+                }
+
+                
+                if(validateResult(input, output)) {
+                } else {
+                    setOutputInInput(input);
+                    adjust(input);
+                }
+            }
+            
+            count++;
+        } while(count < this.iterations);
+
+        return true;
+    }
+
+    private boolean validateResult(Inputs input, float[] output) {
+        return input.d1 == output[0] && input.d2 == output[1] && input.d3 == output[2];
+    }
+
+    private Inputs setOutputInInput(Inputs input) {
+        input.x1 = output[0];
+        input.x2 = output[1];
+        input.x3 = output[2];
+        input.x4 = output[3];
+
+        return input;
+    }
+
+    private void adjust(Inputs input) {
+
+        float learningRate = 0.1f;
 
         // float[] newWeights = {
         //     this.weights[0] + (learningRate * this.output * input.x1),
@@ -108,6 +117,4 @@ public class NeuralNetwork {
 
         // this.weights = newWeights;
     }
-
-
 }
