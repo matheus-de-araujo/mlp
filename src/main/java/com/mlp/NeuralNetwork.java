@@ -18,6 +18,8 @@ public class NeuralNetwork {
         this.iterations = iterations;
         
         this.layears = new Layear[4];
+        
+        this.output = new float[4];
 
         initLayears(4);
 
@@ -42,7 +44,13 @@ public class NeuralNetwork {
             int sucess = 1;
 
             for(Inputs input : inputs) {
+                boolean firstLoop = true;
                 for(Layear layer : this.layears) {
+                    if(firstLoop) {
+                        this.output = run(input, layer.getWeights(), layer.getBias());
+                        firstLoop = false;
+                    }
+                    input.x1 = output[0];
                     this.output = run(input, layer.getWeights(), layer.getBias());
     
                     // if(output == input.d1) {
@@ -64,23 +72,29 @@ public class NeuralNetwork {
     }
 
 
-    public float activationFunction(float x) {
+    private float[] activationFunction(float[] output) {
 
-        return x >= 0 ? -1 : 1;
+        for(int i = 0; i < output.length; i++) {
+            output[i] = (float) (1 / (1 + Math.exp((double) (output[i] * -1))));
+        }
+
+        return output;
 
     }
 
-    public float[] run(Inputs input, float[][] weights, float[] bias) {
+    private float[] run(Inputs input, float[][] weights, float[] bias) {
+
+        float[] arrInput = {input.x1, input.x2, input.x3, input.x4};
 
         for(int i = 0; i < weights.length; i++) {
             for(int j = 0; j < weights.length; j++) {
         
-                this.output[i] = input.x1 * weights[i][j]; 
+                this.output[i] += arrInput[j] * weights[i][j]; 
             }
             this.output[i] = this.output[i] - bias[i]; 
         }
 
-        return this.output;
+        return activationFunction(this.output);
     }
 
     public void adjust(Inputs input) {
