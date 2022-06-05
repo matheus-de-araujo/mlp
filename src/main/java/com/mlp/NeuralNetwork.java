@@ -1,12 +1,12 @@
 package com.mlp;
 
 import java.util.ArrayList;
-// import java.util.Random;
+import java.util.Random;
 
 public class NeuralNetwork {
 
-    private float[] weights;
-    private float bias;
+    private float[][] weights;
+    private float[][] bias;
     private float output;
 
     private ArrayList<Inputs> inputs;
@@ -18,27 +18,35 @@ public class NeuralNetwork {
 
         this.iterations = iterations;
 
-        this.weights = new float[inputs.size()];
+        this.weights = new float[4][4];
+
+        this.bias = new float[4][4];
 
         this.initWeights();
 
     }
 
     private void initWeights() {
-        // Random random = new Random();
+        Random random = new Random();
 
         for(int i = 0; i < this.weights.length; i++) {
 
-            // this.weights[i] = random.nextFloat();
-            this.weights[i] = 0;
+            for(int j = 0; j < this.weights.length; j++) {
 
-            // System.out.println("w: " + this.weights[i]);
+                this.weights[i][j] = random.nextFloat();
 
+            }
         }
 
-        this.bias = 0;
-        //System.out.println("b: " + this.bias);
+        for(int i = 0; i < this.bias.length; i++) {
 
+            for(int j = 0; j < this.bias.length; j++) {
+
+                this.bias[i][j] = random.nextFloat();
+                
+            }
+        }
+        System.out.println("pronto");
     }
 
     public float activationFunction(float x) {
@@ -51,14 +59,14 @@ public class NeuralNetwork {
 
         float sum = input.x1 * this.weights[0] + input.x2 * this.weights[1];
 
-        sum += this.bias;
+        // sum += this.bias;
 
         return this.activationFunction(sum);
     }
 
     public void adjust(Inputs input) {
 
-        float learningRate = 0.5f;
+        float learningRate = 0.1f;
 
         float[] newWeights = {
             this.weights[0] + (learningRate * this.output * input.x1),
