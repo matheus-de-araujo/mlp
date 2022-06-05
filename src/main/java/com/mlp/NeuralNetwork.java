@@ -1,22 +1,68 @@
 package com.mlp;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class NeuralNetwork {
 
-    private float output;
+    private float output[];
 
     private ArrayList<Inputs> inputs;
     private int iterations;
+    private Layear[] layears;
+
 
     public NeuralNetwork(ArrayList<Inputs> inputs, int iterations) {
 
         this.inputs = inputs;
 
         this.iterations = iterations;
+        
+        this.layears = new Layear[4];
+
+        initLayears(4);
 
     }
+
+    private void initLayears(int size) {
+
+        for(int i = 0; i < size; i++) {
+
+            Layear l = new Layear(4);
+
+            this.layears[i] = l;
+        }
+    }
+
+    public boolean train() {
+
+        int count = 0;
+
+        do {
+
+            int sucess = 1;
+
+            for(Inputs input : inputs) {
+                for(Layear layer : this.layears) {
+                    this.output = run(input, layer.getWeights(), layer.getBias());
+    
+                    // if(output == input.d1) {
+                    // } else {
+                    //     sucess = 0;
+                    //     adjust(input);
+                    // }
+                }
+            }
+            
+            if(sucess == 1) {
+                System.out.println("Epoca " + (count + 1));
+            }
+            count++;
+        } while(count < this.iterations);
+
+        // System.out.println("Peso 1: " + this.weights[0] + " Peso 2: " + this.weights[1]);
+        return true;
+    }
+
 
     public float activationFunction(float x) {
 
@@ -24,13 +70,17 @@ public class NeuralNetwork {
 
     }
 
-    public float run(Inputs input) {
+    public float[] run(Inputs input, float[][] weights, float[] bias) {
 
-        // float sum = input.x1 * this.weights[0] + input.x2 * this.weights[1];
+        for(int i = 0; i < weights.length; i++) {
+            for(int j = 0; j < weights.length; j++) {
+        
+                this.output[i] = input.x1 * weights[i][j]; 
+            }
+            this.output[i] = this.output[i] - bias[i]; 
+        }
 
-        // sum += this.bias;
-
-        // return this.activationFunction(sum);
+        return this.output;
     }
 
     public void adjust(Inputs input) {
@@ -45,37 +95,5 @@ public class NeuralNetwork {
         // this.weights = newWeights;
     }
 
-    public boolean train() {
-
-        int count = 0;
-
-        Layear l1 = new Layear(4);
-        Layear l2 = new Layear(4);
-        Layear l3 = new Layear(4);
-        Layear l4 = new Layear(4);
-
-        do {
-
-            int sucess = 1;
-
-            for(Inputs input : inputs) {
-                this.output = run(input);
-
-                if(output == input.d1) {
-                } else {
-                    sucess = 0;
-                    adjust(input);
-                }
-            }
-            
-            if(sucess == 1) {
-                System.out.println("Epoca " + (count + 1));
-            }
-            count++;
-        } while(count < this.iterations);
-
-        // System.out.println("Peso 1: " + this.weights[0] + " Peso 2: " + this.weights[1]);
-        return true;
-    }
 
 }

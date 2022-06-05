@@ -30,11 +30,11 @@ public class Layear {
         this.bias = bias;
     }
 
-    public float[] getWeights() {
+    public float[][] getWeights() {
         return weights;
     }
 
-    public void setWeights(float[] weights) {
+    public void setWeights(float[][] weights) {
         this.weights = weights;
     }
 }
