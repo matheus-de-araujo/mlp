@@ -3,16 +3,18 @@ package com.mlp;
 import java.util.Random;
 
 public class Layear {
-    private float[] weights;
+    private float[][] weights;
     private float[] bias;
 
     Layear(int size) {
         Random random = new Random();
-        this.weights = new float[size];
+        this.weights = new float[size][size];
         this.bias = new float[size];
 
         for(int i = 0; i < size; i++) {
-            this.weights[i] = random.nextFloat();
+            for(int j = 0; j < size; j++) {
+                this.weights[i][j] = random.nextFloat();
+            }
         }
 
         for(int i = 0; i < size; i++) {
