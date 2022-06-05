@@ -5,8 +5,6 @@ import java.util.Random;
 
 public class NeuralNetwork {
 
-    private float[][] weights;
-    private float[][] bias;
     private float output;
 
     private ArrayList<Inputs> inputs;
@@ -18,35 +16,6 @@ public class NeuralNetwork {
 
         this.iterations = iterations;
 
-        this.weights = new float[4][4];
-
-        this.bias = new float[4][4];
-
-        this.initWeightsAndBias();
-
-    }
-
-    private void initWeightsAndBias() {
-        Random random = new Random();
-
-        for(int i = 0; i < this.weights.length; i++) {
-
-            for(int j = 0; j < this.weights.length; j++) {
-
-                this.weights[i][j] = random.nextFloat();
-
-            }
-        }
-
-        for(int i = 0; i < this.bias.length; i++) {
-
-            for(int j = 0; j < this.bias.length; j++) {
-
-                this.bias[i][j] = random.nextFloat();
-                
-            }
-        }
-        System.out.println("pronto");
     }
 
     public float activationFunction(float x) {
@@ -57,28 +26,33 @@ public class NeuralNetwork {
 
     public float run(Inputs input) {
 
-        float sum = input.x1 * this.weights[0] + input.x2 * this.weights[1];
+        // float sum = input.x1 * this.weights[0] + input.x2 * this.weights[1];
 
         // sum += this.bias;
 
-        return this.activationFunction(sum);
+        // return this.activationFunction(sum);
     }
 
     public void adjust(Inputs input) {
 
-        float learningRate = 0.1f;
+        // float learningRate = 0.1f;
 
-        float[] newWeights = {
-            this.weights[0] + (learningRate * this.output * input.x1),
-            this.weights[1] + (learningRate * this.output * input.x2),
-        };
+        // float[] newWeights = {
+        //     this.weights[0] + (learningRate * this.output * input.x1),
+        //     this.weights[1] + (learningRate * this.output * input.x2),
+        // };
 
-        this.weights = newWeights;
+        // this.weights = newWeights;
     }
 
     public boolean train() {
 
         int count = 0;
+
+        Layear l1 = new Layear(4);
+        Layear l2 = new Layear(4);
+        Layear l3 = new Layear(4);
+        Layear l4 = new Layear(4);
 
         do {
 
@@ -100,7 +74,7 @@ public class NeuralNetwork {
             count++;
         } while(count < this.iterations);
 
-        System.out.println("Peso 1: " + this.weights[0] + " Peso 2: " + this.weights[1]);
+        // System.out.println("Peso 1: " + this.weights[0] + " Peso 2: " + this.weights[1]);
         return true;
     }
 
