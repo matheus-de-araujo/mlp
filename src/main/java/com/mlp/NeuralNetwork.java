@@ -22,11 +22,11 @@ public class NeuralNetwork {
 
         this.bias = new float[4][4];
 
-        this.initWeights();
+        this.initWeightsAndBias();
 
     }
 
-    private void initWeights() {
+    private void initWeightsAndBias() {
         Random random = new Random();
 
         for(int i = 0; i < this.weights.length; i++) {
