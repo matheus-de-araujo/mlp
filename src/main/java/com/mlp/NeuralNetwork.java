@@ -75,15 +75,24 @@ public class NeuralNetwork {
                     }
                     
                     this.output = run(input, layer.getWeights(), layer.getBias());
+
+                    float[] auxOutput = {output[0], output[1], output[2], output[3]};
+                    Inputs auxInput = new Inputs();
+                    auxInput.x1 = input.x1;
+                    auxInput.x2 = input.x2;
+                    auxInput.x3 = input.x3;
+                    auxInput.x4 = input.x4;
+
+                    layer.setOutput(auxOutput);
+                    layer.setInput(auxInput);
                     
                     firstLoop = false;
                 }
 
-                
                 if(validateResult(input, output)) {
                 } else {
                     setOutputInInput(input);
-                    adjust(input);
+                    // adjust(input, output, layears);
                 }
             }
             
@@ -106,14 +115,28 @@ public class NeuralNetwork {
         return input;
     }
 
-    private void adjust(Inputs input) {
+    private void adjust(Inputs input, float[] output) {
 
         float learningRate = 0.1f;
 
-        // float[] newWeights = {
-        //     this.weights[0] + (learningRate * this.output * input.x1),
-        //     this.weights[1] + (learningRate * this.output * input.x2),
-        // };
+        float[] error = {
+            input.d1 - output[1],
+            input.d2 - output[2],
+            input.d3 - output[3],
+        };
+
+        float[] delta3 = {
+            error[1] * input.d1 * (1 - input.d1),
+            error[2] * input.d2 * (1 - input.d2),
+            error[3] * input.d3 * (1 - input.d3),
+        };
+
+        float[] delta2 = {
+            delta3[0] * ,
+            error[2] * input.d2 * (1 - input.d2),
+            error[3] * input.d3 * (1 - input.d3),
+            error[3] * input.d3 * (1 - input.d3),
+        };
 
         // this.weights = newWeights;
     }
