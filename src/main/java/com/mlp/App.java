@@ -18,7 +18,7 @@ public class App
     }
 
     public static ArrayList<Inputs> getinputs() throws NumberFormatException, IOException {
-        FileInputStream fileInputStream = new FileInputStream("src/dados.csv");
+        FileInputStream fileInputStream = new FileInputStream("src/dado.csv");
         BufferedReader BufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
         ArrayList<Inputs> inputs = new ArrayList<>();
 
@@ -28,7 +28,11 @@ public class App
             String[] data = strLine.split(";");
             input.x1 = Float.parseFloat(data[0]);
             input.x2 = Float.parseFloat(data[1]);
-            input.d  = Float.parseFloat(data[3]);
+            input.x3 = Float.parseFloat(data[2]);
+            input.x4 = Float.parseFloat(data[3]);
+            input.d1 = Float.parseFloat(data[4]);
+            input.d2 = Float.parseFloat(data[5]);
+            input.d3 = Float.parseFloat(data[6]);
 
             inputs.add(input);
         }

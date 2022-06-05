@@ -79,7 +79,7 @@ public class NeuralNetwork {
             for(Inputs input : inputs) {
                 this.output = run(input);
 
-                if(output == input.d) {
+                if(output == input.d1) {
                 } else {
                     sucess = 0;
                     adjust(input);
