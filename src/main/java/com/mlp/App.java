@@ -11,14 +11,21 @@ public class App
 {
     public static void main( String[] args ) throws NumberFormatException, IOException
     {
-        ArrayList<Inputs> inputs = getinputs(); 
+        ArrayList<Inputs> inputs = getinputs("src/dados.csv"); 
 
         NeuralNetwork network = new NeuralNetwork(inputs, 1000);
+
         network.train();
+
+        inputs = getinputs("src/teste.csv"); 
+
+        network.setInputs(inputs);
+
+        network.test();
     }
 
-    public static ArrayList<Inputs> getinputs() throws NumberFormatException, IOException {
-        FileInputStream fileInputStream = new FileInputStream("src/dados.csv");
+    public static ArrayList<Inputs> getinputs(String caminho) throws NumberFormatException, IOException {
+        FileInputStream fileInputStream = new FileInputStream(caminho);
         BufferedReader BufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
         ArrayList<Inputs> inputs = new ArrayList<>();
 

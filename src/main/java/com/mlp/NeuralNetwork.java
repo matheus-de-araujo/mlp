@@ -9,7 +9,10 @@ public class NeuralNetwork {
     private ArrayList<Inputs> inputs;
     private int iterations;
     private Layear[] layears;
-
+    
+    public void setInputs(ArrayList<Inputs> inputs) {
+        this.inputs = inputs;
+    }
 
     public NeuralNetwork(ArrayList<Inputs> inputs, int iterations) {
 
@@ -92,8 +95,7 @@ public class NeuralNetwork {
                 if(validateResult(input, output)) {
                 } else {
                     setOutputInInput(input);
-                    adjustWeights(input);
-                    adjustBias(input);
+                    backPropagation(input);
                 }
             }
 
@@ -116,16 +118,7 @@ public class NeuralNetwork {
         return input;
     }
 
-    private Inputs adjustBias(Inputs input) {
-        input.x1 = output[0];
-        input.x2 = output[1];
-        input.x3 = output[2];
-        input.x4 = output[3];
-
-        return input;
-    }
-
-    private void adjustWeights(Inputs input) {
+    private void backPropagation(Inputs input) {
 
         float learningRate = 0.1f;
 
@@ -160,20 +153,32 @@ public class NeuralNetwork {
         
         for(int i = 0; i < this.layears[3].getWeights().length; i++) {
             for(int j = 0; j < delta3.length; j++) {
-                this.layears[3].getWeights()[i][j] = this.layears[3].getWeights()[i][j] + (learningRate *  this.layears[3].getOutput()[i] * delta3[j]);
+                this.layears[3].getWeights()[i][j] += learningRate *  this.layears[3].getOutput()[i] * delta3[j];
             }
         }
 
         for(int i = 0; i < this.layears[2].getWeights().length; i++) {
             for(int j = 0; j < delta2.length; j++) {
-                this.layears[2].getWeights()[i][j] = this.layears[2].getWeights()[i][j] + (learningRate *  this.layears[2].getOutput()[i] * delta2[j]);
+                this.layears[2].getWeights()[i][j] += learningRate *  this.layears[2].getOutput()[i] * delta2[j];
             }
         }
 
         for(int i = 0; i < this.layears[1].getWeights().length; i++) {
             for(int j = 0; j < delta1.length; j++) {
-                this.layears[1].getWeights()[i][j] = this.layears[1].getWeights()[i][j] + (learningRate *  this.layears[1].getOutput()[i] * delta1[j]);
+                this.layears[1].getWeights()[i][j] += learningRate *  this.layears[1].getOutput()[i] * delta1[j];
             }
+        }
+
+        for(int i = 0; i < delta3.length; i++) {
+            this.layears[3].getBias()[i] += learningRate * (-1 * this.layears[3].getBias()[i]) * delta3[i];
+        }
+
+        for(int i = 0; i < delta2.length; i++) {
+            this.layears[2].getBias()[i] += learningRate * (-1 * this.layears[2].getBias()[i]) * delta2[i];
+        }
+
+        for(int i = 0; i < delta1.length; i++) {
+            this.layears[1].getBias()[i] += learningRate * (-1 * this.layears[1].getBias()[i]) * delta1[i];
         }
     }
 
@@ -186,4 +191,44 @@ public class NeuralNetwork {
         return result;
     }
 
+    public boolean test() {
+
+        int count = 0;
+
+        do {
+
+            for(Inputs input : inputs) {
+                boolean firstLoop = true;
+                for(Layear layer : this.layears) {
+                    if(!firstLoop) {
+                        setOutputInInput(input);
+                    }
+
+                    this.output = run(input, layer.getWeights(), layer.getBias());
+
+                    float[] auxOutput = {output[0], output[1], output[2], output[3]};
+                    Inputs auxInput = new Inputs();
+                    auxInput.x1 = input.x1;
+                    auxInput.x2 = input.x2;
+                    auxInput.x3 = input.x3;
+                    auxInput.x4 = input.x4;
+
+                    layer.setOutput(auxOutput);
+                    layer.setInput(auxInput);
+
+                    firstLoop = false;
+                }
+
+                if(validateResult(input, output)) {
+                } else {
+                    setOutputInInput(input);
+                    backPropagation(input);
+                }
+            }
+
+            count++;
+        } while(count < this.iterations);
+
+        return true;
+    }
 }
