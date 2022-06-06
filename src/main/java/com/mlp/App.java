@@ -13,7 +13,7 @@ public class App
     {
         ArrayList<Inputs> inputs = getinputs("src/dados.csv"); 
 
-        NeuralNetwork network = new NeuralNetwork(inputs, 1000);
+        NeuralNetwork network = new NeuralNetwork(inputs, 10000);
 
         network.train();
 

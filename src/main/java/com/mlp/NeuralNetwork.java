@@ -46,7 +46,6 @@ public class NeuralNetwork {
         }
 
         return output;
-
     }
 
     private float[] run(Inputs input, float[][] weights, float[] bias) {
@@ -58,7 +57,7 @@ public class NeuralNetwork {
 
                 this.output[i] += arrInput[j] * weights[i][j];
             }
-            this.output[i] = this.output[i] - bias[i];
+            this.output[i] = this.output[i] + bias[i];
         }
 
         return activationFunction(this.output);
@@ -67,6 +66,7 @@ public class NeuralNetwork {
     public boolean train() {
 
         int count = 0;
+        float[] y = new float[4];
 
         do {
 
@@ -92,7 +92,15 @@ public class NeuralNetwork {
                     firstLoop = false;
                 }
 
-                if(validateResult(input, output)) {
+                for(int i = 0; i < this.output.length; i++ ) {
+                    if(this.output[i] >= 0.5) {
+                        y[i] = 1;
+                    } else{
+                        y[i] = 0;
+                    }
+                }
+
+                if(validateResult(input, y)) {
                 } else {
                     setOutputInInput(input);
                     backPropagation(input);
@@ -130,55 +138,60 @@ public class NeuralNetwork {
 
 
         float[] delta3 = {
-            error[0] * input.d1 * (1 - input.d1),
-            error[1] * input.d2 * (1 - input.d2),
-            error[2] * input.d3 * (1 - input.d3),
+            error[0] * output[0] * (1 - output[0]),
+            error[1] * output[1] * (1 - output[1]),
+            error[2] * output[2] * (1 - output[2]),
         };
 
             
         float[] delta2 = {
-            sumDelta(delta3, this.layears[2].getWeights()[0]) * this.layears[2].getInput().x1 * (1 - this.layears[2].getInput().x1),
-            sumDelta(delta3, this.layears[2].getWeights()[1]) * this.layears[2].getInput().x2 * (1 - this.layears[2].getInput().x2),
-            sumDelta(delta3, this.layears[2].getWeights()[2]) * this.layears[2].getInput().x3 * (1 - this.layears[2].getInput().x3),
-            sumDelta(delta3, this.layears[2].getWeights()[3]) * this.layears[2].getInput().x4 * (1 - this.layears[2].getInput().x4),
+            sumDelta(delta3, this.layears[2].getWeights()[0]) * this.layears[2].getOutput()[0] * (1 - this.layears[2].getOutput()[0]),
+            sumDelta(delta3, this.layears[2].getWeights()[1]) * this.layears[2].getOutput()[1] * (1 - this.layears[2].getOutput()[1]),
+            sumDelta(delta3, this.layears[2].getWeights()[2]) * this.layears[2].getOutput()[2] * (1 - this.layears[2].getOutput()[2]),
+            sumDelta(delta3, this.layears[2].getWeights()[3]) * this.layears[2].getOutput()[3] * (1 - this.layears[2].getOutput()[3]),
         };
 
         float[] delta1 = {
-            sumDelta(delta2, this.layears[1].getWeights()[0]) * this.layears[1].getInput().x1 * (1 - this.layears[1].getInput().x1),
-            sumDelta(delta2, this.layears[1].getWeights()[1]) * this.layears[1].getInput().x2 * (1 - this.layears[1].getInput().x2),
-            sumDelta(delta2, this.layears[1].getWeights()[2]) * this.layears[1].getInput().x3 * (1 - this.layears[1].getInput().x3),
-            sumDelta(delta2, this.layears[1].getWeights()[3]) * this.layears[1].getInput().x4 * (1 - this.layears[1].getInput().x4),
+            sumDelta(delta2, this.layears[1].getWeights()[0]) * this.layears[1].getOutput()[0] * (1 - this.layears[1].getOutput()[0]),
+            sumDelta(delta2, this.layears[1].getWeights()[1]) * this.layears[1].getOutput()[1] * (1 - this.layears[1].getOutput()[1]),
+            sumDelta(delta2, this.layears[1].getWeights()[2]) * this.layears[1].getOutput()[2] * (1 - this.layears[1].getOutput()[2]),
+            sumDelta(delta2, this.layears[1].getWeights()[3]) * this.layears[1].getOutput()[3] * (1 - this.layears[1].getOutput()[3]),
         };
 
-        
-        for(int i = 0; i < this.layears[3].getWeights().length; i++) {
+        float[][] auxWeight3 = this.layears[3].getWeights();
+        for(int i = 0; i < auxWeight3.length; i++) {
             for(int j = 0; j < delta3.length; j++) {
-                this.layears[3].getWeights()[i][j] += learningRate *  this.layears[3].getOutput()[i] * delta3[j];
+                auxWeight3[i][j] = auxWeight3[i][j] + (learningRate *  this.layears[3].getOutput()[i] * delta3[j]);
             }
         }
 
+        float[][] auxWeight2 = this.layears[2].getWeights();
         for(int i = 0; i < this.layears[2].getWeights().length; i++) {
             for(int j = 0; j < delta2.length; j++) {
-                this.layears[2].getWeights()[i][j] += learningRate *  this.layears[2].getOutput()[i] * delta2[j];
+                auxWeight2[i][j] = auxWeight2[i][j] + learningRate *  this.layears[2].getOutput()[i] * delta2[j];
             }
         }
 
+        float[][] auxWeight1 = this.layears[1].getWeights();
         for(int i = 0; i < this.layears[1].getWeights().length; i++) {
             for(int j = 0; j < delta1.length; j++) {
-                this.layears[1].getWeights()[i][j] += learningRate *  this.layears[1].getOutput()[i] * delta1[j];
+                auxWeight1[i][j] = auxWeight1[i][j] + learningRate *  this.layears[1].getOutput()[i] * delta1[j];
             }
         }
 
+        float[] auxBias3 = this.layears[3].getBias();
         for(int i = 0; i < delta3.length; i++) {
-            this.layears[3].getBias()[i] += learningRate * (-1 * this.layears[3].getBias()[i]) * delta3[i];
+            auxBias3[i] += learningRate * (-1 * this.layears[3].getBias()[i]) * delta3[i];
         }
 
+        float[] auxBias2 = this.layears[2].getBias();
         for(int i = 0; i < delta2.length; i++) {
-            this.layears[2].getBias()[i] += learningRate * (-1 * this.layears[2].getBias()[i]) * delta2[i];
+            auxBias2[i] += learningRate * (-1 * this.layears[2].getBias()[i]) * delta2[i];
         }
 
+        float[] auxBias1 = this.layears[1].getBias();
         for(int i = 0; i < delta1.length; i++) {
-            this.layears[1].getBias()[i] += learningRate * (-1 * this.layears[1].getBias()[i]) * delta1[i];
+            auxBias1[i] += learningRate * (-1 * this.layears[1].getBias()[i]) * delta1[i];
         }
     }
 
@@ -193,41 +206,32 @@ public class NeuralNetwork {
 
     public boolean test() {
 
-        int count = 0;
+        int acertos = 0;
+        float[] y = new float[4];
 
-        do {
+        for(Inputs input : inputs) {
+            for(Layear layer : this.layears) {
 
-            for(Inputs input : inputs) {
-                boolean firstLoop = true;
-                for(Layear layer : this.layears) {
-                    if(!firstLoop) {
-                        setOutputInInput(input);
-                    }
+                this.output = run(input, layer.getWeights(), layer.getBias());
+            }
 
-                    this.output = run(input, layer.getWeights(), layer.getBias());
-
-                    float[] auxOutput = {output[0], output[1], output[2], output[3]};
-                    Inputs auxInput = new Inputs();
-                    auxInput.x1 = input.x1;
-                    auxInput.x2 = input.x2;
-                    auxInput.x3 = input.x3;
-                    auxInput.x4 = input.x4;
-
-                    layer.setOutput(auxOutput);
-                    layer.setInput(auxInput);
-
-                    firstLoop = false;
-                }
-
-                if(validateResult(input, output)) {
-                } else {
-                    setOutputInInput(input);
-                    backPropagation(input);
+            for(int i = 0; i < this.output.length; i++ ) {
+                if(this.output[i] >= 0.5) {
+                    y[i] = 1;
+                } else{
+                    y[i] = 0;
                 }
             }
 
-            count++;
-        } while(count < this.iterations);
+            if(validateResult(input, y)) {
+                acertos++;
+            } else {
+
+            }
+            System.out.println(y[0] + " " + y[1] + " " + y[2]);
+        }
+
+    System.out.println("Porcentagem de acertos: " + acertos/18);
 
         return true;
     }
