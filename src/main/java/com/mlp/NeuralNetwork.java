@@ -16,9 +16,9 @@ public class NeuralNetwork {
         this.inputs = inputs;
 
         this.iterations = iterations;
-        
+
         this.layears = new Layear[4];
-        
+
         this.output = new float[4];
 
         initLayears(this.output.length);
@@ -52,10 +52,10 @@ public class NeuralNetwork {
 
         for(int i = 0; i < weights.length; i++) {
             for(int j = 0; j < weights.length; j++) {
-        
-                this.output[i] += arrInput[j] * weights[i][j]; 
+
+                this.output[i] += arrInput[j] * weights[i][j];
             }
-            this.output[i] = this.output[i] - bias[i]; 
+            this.output[i] = this.output[i] - bias[i];
         }
 
         return activationFunction(this.output);
@@ -73,7 +73,7 @@ public class NeuralNetwork {
                     if(!firstLoop) {
                         setOutputInInput(input);
                     }
-                    
+
                     this.output = run(input, layer.getWeights(), layer.getBias());
 
                     float[] auxOutput = {output[0], output[1], output[2], output[3]};
@@ -85,17 +85,17 @@ public class NeuralNetwork {
 
                     layer.setOutput(auxOutput);
                     layer.setInput(auxInput);
-                    
+
                     firstLoop = false;
                 }
 
                 if(validateResult(input, output)) {
                 } else {
                     setOutputInInput(input);
-                    // adjust(input, output, layears);
+                    adjust(input);
                 }
             }
-            
+
             count++;
         } while(count < this.iterations);
 
@@ -115,7 +115,7 @@ public class NeuralNetwork {
         return input;
     }
 
-    private void adjust(Inputs input, float[] output) {
+    private void adjust(Inputs input) {
 
         float learningRate = 0.1f;
 
@@ -125,6 +125,7 @@ public class NeuralNetwork {
             input.d3 - output[3],
         };
 
+
         float[] delta3 = {
             error[1] * input.d1 * (1 - input.d1),
             error[2] * input.d2 * (1 - input.d2),
@@ -132,11 +133,13 @@ public class NeuralNetwork {
         };
 
         float[] delta2 = {
-            delta3[0] * ,
-            error[2] * input.d2 * (1 - input.d2),
-            error[3] * input.d3 * (1 - input.d3),
-            error[3] * input.d3 * (1 - input.d3),
+            delta3[0] * this.layears[2].getWeights()[2][0],
+            delta3[0] * this.layears[2].getWeights()[2][0],
+            delta3[0] * this.layears[2].getWeights()[2][0],
+            delta3[0] * this.layears[2].getWeights()[2][0], 
         };
+
+
 
         // this.weights = newWeights;
     }
